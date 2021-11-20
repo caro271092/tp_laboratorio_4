@@ -186,3 +186,17 @@ LinkedList* ll_clone(LinkedList* this);
                                 ( 0) Si ok
  */
 int ll_sort(LinkedList* this, int (*pFunc)(void* ,void*), int order);
+
+/// \fn LinkedList ll_filter*(LinkedList*, int(*)(void*))
+/// \brief genera una nueva lista según si elementos de lista recibida cumplen con criterio de Fn
+/// \param this lista recibida
+/// \param pFn puntero a función criterio para generar nueva lista
+/// \return nueva lista con elementos seleccionados por Fn
+LinkedList* ll_filter(LinkedList* this,int (*pFn)(void* element));
+
+/// \fn int ll_count(LinkedList*, int(*)(void*))
+/// \brief acumula la cantidad segun el criterio de la Fn que recibe como parámetro
+/// \param this lista recibida
+/// \param pFn puntero a función criterio para acumular lo que cumple con su criterio
+/// \return cantidad acumulada identificada con el criterio de Fn
+int ll_count(LinkedList* this, int (*fn)(void* element));

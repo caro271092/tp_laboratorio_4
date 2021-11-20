@@ -61,7 +61,7 @@ static int addNode(LinkedList* this, int nodeIndex,void* pElement){
     Node* nuevoNodo;
     nuevoNodo = (Node*)malloc(sizeof(nuevoNodo));
     Node* nodoAnterior;
-    if(this!=NULL && nuevoNodo!=NULL && nodeIndex>=0 && nodeIndex<=this->size){//si la cabeza ya es null se coloca ahí el nodo creado
+    if(this!=NULL && nuevoNodo!=NULL && nodeIndex>=0 && nodeIndex<=this->size){//si la cabecera ya es null se coloca ahí el nodo creado
     	nuevoNodo->pElement=pElement;//cargo el puntero al elemento recibido
     	if(nodeIndex==0){
     		nuevoNodo->pNextNode = this->pFirstNode;
@@ -284,9 +284,9 @@ LinkedList* ll_subList(LinkedList* this,int from,int to){
 
 LinkedList* ll_clone(LinkedList* this){
     LinkedList* cloneArray = NULL;
-		if(this!=NULL){
-		  cloneArray = ll_subList(this, 0, ll_len(this));
-		}
+	if(this!=NULL){
+	  cloneArray = ll_subList(this, 0, ll_len(this));
+	}
     return cloneArray;
 }
 
@@ -299,34 +299,59 @@ int ll_sort(LinkedList* this, int (*pFunc)(void* ,void*), int order){//0 des 1 a
 	int i;
 	int j;
 	int retornoPFunc;
-    if(this!=NULL && pFunc!=NULL && len>0 && order==1){
+    if((this!=NULL && pFunc!=NULL && len>0) && ((order==1)||(order==0))){
 		for(i=0;i<len-1;i++){//recorro lista
+			elemento1 = ll_get(this, i);
 			for(j=i+1;j<len;j++){
-				elemento1 = ll_get(this, i);
 				elemento2 = ll_get(this, j);
 				retornoPFunc = pFunc(elemento1,elemento2);
-					if(retornoPFunc==1){//quiere decir q el elemento1 es mayor q el 2, entonces los cambio de lugar
-					ll_set(this, i, elemento2);//en el 0 queda el más chico pq menor a mayor
+					if((retornoPFunc>0 && order==1)||(retornoPFunc<0 && order==0)){//quiere decir q el elemento1 es mayor(o menor en 0) q el 2, entonces los cambio de lugar
+					ll_set(this, i, elemento2);//en el 0 queda el más chico(o mas grande) pq menor a mayor//mayor a menor//cuando es necesario swap
 					ll_set(this, j, elemento1);
 					}
 			}
 		}
 		returnAux = 0;
-    }else{
-    	if(this!=NULL && pFunc!=NULL && len>0 && order==0){		//des
-    		for(i=0;i<len-1;i++){//recorro lista
-				for(j=i+1;j<len;j++){
-					elemento1 = ll_get(this, i);
-					elemento2 = ll_get(this, j);
-					retornoPFunc = pFunc(elemento1,elemento2);
-						if(retornoPFunc==-1){//quiere decir q el elemento1 es MENOR q el 2, entonces los cambio de lugar
-						ll_set(this, i, elemento2);//PARA IR DE MAYOR a MEN
-						ll_set(this, j, elemento1);
-						}
-				}
-    		}
-    		returnAux = 0;
-    	}
     }
     return returnAux;
 }
+
+LinkedList* ll_filter(LinkedList* this,int (*pFn)(void* element)){
+	LinkedList* listaFiltrada = NULL;
+	int i;
+	int len;
+	len = ll_len(this);
+	void* elemento;//le voy pasando elementos para adentro de Fn acceder al campo q corresponda y obtener lo q quiera filtrar
+	if(this!=NULL && pFn!=NULL && len>0){
+	   LinkedList* listaFiltrada = ll_newLinkedList();
+	   if(listaFiltrada!=NULL){
+			for(i=0;i<len;i++){
+				elemento=ll_get(this,i);
+				if(pFn(elemento)==1){//la f tiene q devolver 1 si el elem cumple
+					ll_add(listaFiltrada,elemento);//agrego el elem a la nueva lista
+				}
+			}
+		}
+	}
+	return listaFiltrada;
+}
+
+int ll_count(LinkedList* this, int (*pFn)(void* element)){
+	int acumulador=0;
+	int i;
+	int len;
+	len = ll_len(this);
+	void* elemento;//le voy pasando elementos para adentro de Fn acceder al campo q corresponda y obtener lo q quiera contar
+	int retornoFn;
+	if(this!=NULL && pFn!=NULL && len>0){
+		for(i=0;i<len;i++){
+			elemento=ll_get(this,i);
+			retornoFn=pFn(elemento);
+			if(retornoFn!=0){//la f tiene q devolver algo mayor a 0 si hay q acumular, sino 0
+				acumulador=acumulador+retornoFn;
+			}
+		}
+	}
+	return acumulador;
+}
+
