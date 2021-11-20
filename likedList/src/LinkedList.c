@@ -320,7 +320,7 @@ int ll_sort(LinkedList* this, int (*pFunc)(void* ,void*), int order){//0 des 1 a
 					elemento2 = ll_get(this, j);
 					retornoPFunc = pFunc(elemento1,elemento2);
 						if(retornoPFunc==-1){//quiere decir q el elemento1 es MENOR q el 2, entonces los cambio de lugar
-						ll_set(this, i, elemento2);//PARA IR DE MENOR A MAYOR
+						ll_set(this, i, elemento2);//PARA IR DE MAYOR a MEN
 						ll_set(this, j, elemento1);
 						}
 				}
